@@ -8,6 +8,9 @@
                 <asp:Button ID="BtnGenerateLoad" runat="server" Text="Generate CPU Load" OnClick="BtnGenerateLoad_Click" />
                 <br />
                 <br />
+                <asp:Button ID="BtnGenerateLoad2" runat="server" Text="Generate CPU Load New" OnClick="BtnGenerateLoad2_Click" />
+                <br />
+                <br />
                 <asp:Label ID="lblProcessorGroupInfo" runat="server"></asp:Label>
                 <p>Your system has <%= Environment.ProcessorCount %> processors.</p>
             </div>

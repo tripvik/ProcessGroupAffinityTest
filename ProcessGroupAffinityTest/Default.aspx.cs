@@ -16,6 +16,7 @@ namespace ProcessGroupAffinityTest
     {
 
         private static CancellationTokenSource cts = new CancellationTokenSource();
+        private static CancellationTokenSource cts2 = new CancellationTokenSource();
 
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -40,6 +41,21 @@ namespace ProcessGroupAffinityTest
             RefreshAffinityInfo();
         }
 
+        protected void BtnGenerateLoad2_Click(object sender, EventArgs e)
+        {
+            if (((Button)sender).Text == "Generate CPU Load New")
+            {
+                StartCpuLoad2();
+                ((Button)sender).Text = "Stop CPU Load New";
+            }
+            else
+            {
+                StopCpuLoad();
+                ((Button)sender).Text = "Generate CPU Load New";
+            }
+            RefreshAffinityInfo();
+        }
+
         private void StartCpuLoad()
         {
             cts = new CancellationTokenSource();
@@ -55,6 +71,21 @@ namespace ProcessGroupAffinityTest
             }
         }
 
+        private void StartCpuLoad2()
+        {
+            cts2 = new CancellationTokenSource();
+            int processorCount = Environment.ProcessorCount;
+
+            for (int i = 0; i < processorCount; i++)
+            {
+                int processorIndex = i;
+                Task.Run(() =>
+                {
+                    GenerateLoad2(cts2.Token, processorIndex);
+                }, cts2.Token);
+            }
+        }
+
         private void GenerateLoad(CancellationToken token, int processorIndex)
         {
             int processorCount = Environment.ProcessorCount;
@@ -65,6 +96,30 @@ namespace ProcessGroupAffinityTest
             };
 
             Parallel.ForEach(Enumerable.Range(0, processorCount), options, (i) =>
+            {
+                Thread.CurrentThread.Priority = ThreadPriority.Highest;
+                while (!token.IsCancellationRequested)
+                {
+                    // Perform CPU-intensive calculations
+                    double value = 0;
+                    for (int j = 0; j < 100000; j++)
+                    {
+                        value += Math.Sqrt(j);
+                    }
+                }
+            });
+        }
+
+        private void GenerateLoad2(CancellationToken token, int processorIndex)
+        {
+            int processorCount = Environment.ProcessorCount;
+            var options = new ParallelOptions
+            {
+                MaxDegreeOfParallelism = processorCount,
+                CancellationToken = token
+            };
+
+            Parallel.For(0, processorCount, options, (i) =>
             {
                 Thread.CurrentThread.Priority = ThreadPriority.Highest;
                 while (!token.IsCancellationRequested)

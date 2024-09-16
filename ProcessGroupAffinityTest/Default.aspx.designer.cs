@@ -24,6 +24,15 @@ namespace ProcessGroupAffinityTest
         protected global::System.Web.UI.WebControls.Button BtnGenerateLoad;
 
         /// <summary>
+        /// BtnGenerateLoad2 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button BtnGenerateLoad2;
+
+        /// <summary>
         /// lblProcessorGroupInfo control.
         /// </summary>
         /// <remarks>
